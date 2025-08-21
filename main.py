@@ -32,10 +32,11 @@ async def web_to_html(url: str, ctx: Context) -> str:
 
 if __name__ == "__main__":
     mcp_type = os.getenv("MCP_TYPE", "stdio").lower()
+    host = os.getenv("MCP_HOST", "127.0.0.1").lower()
 
     if mcp_type == "sse":
-        mcp.run(transport="sse")
+        mcp.run(transport="sse", host=host)
     elif mcp_type == "streamable-http":
-        mcp.run(transport="streamable-http")
+        mcp.run(transport="streamable-http", host=host)
     else:
         mcp.run(transport="stdio")
