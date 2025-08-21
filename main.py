@@ -32,11 +32,18 @@ async def web_to_html(url: str, ctx: Context) -> str:
 
 if __name__ == "__main__":
     mcp_type = os.getenv("MCP_TYPE", "stdio").lower()
-    host = os.getenv("MCP_HOST", "127.0.0.1").lower()
+    host = os.getenv("MCP_HOST", "127.0.0.1")
+    port_str = os.getenv("MCP_PORT", "8000")
+    try:
+        port = int(port_str)
+        if not (0 <= port <= 65535):
+            raise ValueError(f"Port {port} is out of valid range (0-65535)")
+    except ValueError as e:
+        raise ValueError(f"Invalid port number: {port_str}") from e
 
     if mcp_type == "sse":
-        mcp.run(transport="sse", host=host)
+        mcp.run(transport="sse", host=host, port=port)
     elif mcp_type == "streamable-http":
-        mcp.run(transport="streamable-http", host=host)
+        mcp.run(transport="streamable-http", host=host, port=port)
     else:
         mcp.run(transport="stdio")

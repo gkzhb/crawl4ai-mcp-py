@@ -58,3 +58,4 @@ MCP_HOST=0.0.0.0 MCP_TYPE=sse uv run main.py
 ## Environment Variables
 - `MCP_TYPE`: Transport type ( `stdio` , `sse` , `streamable-http` ) - defaults to "stdio"
 - `MCP_HOST`: Host address for SSE/HTTP modes - defaults to "127.0.0.1"
+- `MCP_PORT`: Listening port for SSE/HTTP modes - defaults to "8000"
