@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     if mcp_type == "sse":
         mcp.run(transport="sse", host=host, port=port)
-    elif mcp_type == "streamable-http":
-        mcp.run(transport="streamable-http", host=host, port=port)
+    elif mcp_type == "http":
+        mcp.run(transport="http", host=host, port=port)
     else:
         mcp.run(transport="stdio")

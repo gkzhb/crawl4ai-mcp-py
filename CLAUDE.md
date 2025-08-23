@@ -18,9 +18,9 @@ This is a Python MCP (Model Context Protocol) server that provides web crawling 
 - **Install dependencies**: `pip install -e .` or `uv sync`
 - **Run server**: `python main.py` (stdio mode by default)
 - **Run with SSE**: `MCP_TYPE=sse python main.py`
-- **Run with HTTP**: `MCP_TYPE=streamable-http python main.py`
+- **Run with HTTP**: `MCP_TYPE=http python main.py`
 - **Custom host**: `MCP_HOST=0.0.0.0 MCP_TYPE=sse python main.py`
 
 ## Environment Variables
-- `MCP_TYPE`: Transport type (stdio|sse|streamable-http), defaults to "stdio"
+- `MCP_TYPE`: Transport type (stdio|sse|http), defaults to "stdio"
 - `MCP_HOST`: Host address for SSE/HTTP modes, defaults to "127.0.0.1"
