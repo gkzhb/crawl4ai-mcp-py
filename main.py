@@ -1,16 +1,25 @@
 import os
 from fastmcp import FastMCP, Context
 from crawl4ai.models import CrawlResultContainer
-from crawl4ai import AsyncWebCrawler
+from crawl4ai import AsyncWebCrawler, BrowserConfig, CacheMode, CrawlerRunConfig
 
 mcp = FastMCP("crawl4ai-mcp")
 
+config = BrowserConfig(
+    enable_stealth=True,
+)
+crawler_config = CrawlerRunConfig(
+    cache_mode=CacheMode.BYPASS,
+    magic=True,
+    simulate_user=True,
+    override_navigator=True,
+)
 
 @mcp.tool()
 async def web_to_md(url: str, ctx: Context) -> str:
     """Convert web page to markdown content."""
-    async with AsyncWebCrawler(verbose=False) as crawler:
-        result = await crawler.arun(url=url)
+    async with AsyncWebCrawler(config=config, verbose=False) as crawler:
+        result = await crawler.arun(url=url, config=crawler_config)
         if isinstance(result, CrawlResultContainer):
             await ctx.info(f"Web crawler result: {result.markdown}")
             return ''.join(result.markdown)
@@ -21,8 +30,9 @@ async def web_to_md(url: str, ctx: Context) -> str:
 @mcp.tool()
 async def web_to_html(url: str, ctx: Context) -> str:
     """Convert web page to html content."""
-    async with AsyncWebCrawler(verbose=False) as crawler:
-        result = await crawler.arun(url=url)
+    async with AsyncWebCrawler(config=config, verbose=False) as crawler:
+
+        result = await crawler.arun(url=url, config=crawler_config)
         if isinstance(result, CrawlResultContainer):
             await ctx.info(f"Web crawler result: {result.cleaned_html}")
             return ''.join(result.cleaned_html)
