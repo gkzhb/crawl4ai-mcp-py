@@ -5,6 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 This is a Python MCP (Model Context Protocol) server that provides web crawling capabilities using the crawl4ai library. It exposes two main tools for converting web pages to markdown or HTML format.
 
+This project uses uv to manage python project. So do not use python command to run python code, use `uv run xx.py` instead.
+
+
 ## Architecture
 - **FastMCP**: Uses fastmcp>=2.11.3 as the MCP server framework
 - **crawl4ai**: Uses crawl4ai>=0.7.4 for web crawling and content extraction
@@ -15,7 +18,7 @@ This is a Python MCP (Model Context Protocol) server that provides web crawling 
 - `pyproject.toml`: Project configuration with dependencies
 
 ## Development Commands
-- **Install dependencies**: `pip install -e .` or `uv sync`
+- **Install dependencies**: `uv sync`
 - **Run server**: `python main.py` (stdio mode by default)
 - **Run with SSE**: `MCP_TYPE=sse python main.py`
 - **Run with HTTP**: `MCP_TYPE=http python main.py`
