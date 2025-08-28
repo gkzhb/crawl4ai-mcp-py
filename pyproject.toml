@@ -1,11 +1,15 @@
 [project]
-name = "crawl4ai-mcp-py"
+name = "web-mcp-repo"
 version = "0.1.0"
-description = "Minimum MCP server to convert web2md"
+description = "A collection of MCP Servers for Web"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "crawl4ai>=0.7.4",
     "fastmcp>=2.11.3",
-    "playwright-stealth>=2.0.0",
 ]
+
+[tool.uv.sources]
+crawl4ai-mcp-py = { workspace = true }
+
+[tool.uv.workspace]
+members = ["packages/*"]

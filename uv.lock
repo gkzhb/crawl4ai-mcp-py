@@ -2,6 +2,12 @@ version = 1
 revision = 2
 requires-python = ">=3.11"
 
+[manifest]
+members = [
+    "crawl4ai-mcp-py",
+    "web-mcp-repo",
+]
+
 [[package]]
 name = "aiofiles"
 version = "24.1.0"
@@ -438,17 +444,15 @@ wheels = [
 [[package]]
 name = "crawl4ai-mcp-py"
 version = "0.1.0"
-source = { virtual = "." }
+source = { virtual = "packages/crawl4ai-mcp-py" }
 dependencies = [
     { name = "crawl4ai" },
-    { name = "fastmcp" },
     { name = "playwright-stealth" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "crawl4ai", specifier = ">=0.7.4" },
-    { name = "fastmcp", specifier = ">=2.11.3" },
     { name = "playwright-stealth", specifier = ">=2.0.0" },
 ]
 
@@ -2535,6 +2539,17 @@ sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/5e/42/e0
 wheels = [
     { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/d2/e2/dc81b1bd1dcfe91735810265e9d26bc8ec5da45b4c0f6237e286819194c3/uvicorn-0.35.0-py3-none-any.whl", hash = "sha256:197535216b25ff9b785e29a0b79199f55222193d47f820816e7da751e9bc8d4a", size = 66406, upload-time = "2025-06-28T16:15:44.816Z" },
 ]
+
+[[package]]
+name = "web-mcp-repo"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "fastmcp" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "fastmcp", specifier = ">=2.11.3" }]
 
 [[package]]
 name = "werkzeug"

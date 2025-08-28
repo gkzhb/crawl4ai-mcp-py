@@ -18,7 +18,7 @@ proxy_username = os.getenv("CRAWL4AI_PROXY_USERNAME")
 proxy_password = os.getenv("CRAWL4AI_PROXY_PASSWORD")
 
 # 构建BrowserConfig
-config_kwargs: Dict[str, Any] = {"enable_stealth": True}
+config_kwargs: Dict[str, Any] = {"enable_stealth": False}
 
 # 如果设置了代理服务器，添加到配置中
 if proxy_server:
