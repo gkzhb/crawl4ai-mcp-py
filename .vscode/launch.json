@@ -15,13 +15,26 @@
             }
         },
         {
-            "name": "Python: Main",
+            "name": "Python: Crawl4AI MCP",
             "type": "debugpy",
             "request": "launch",
-            "program": "main.py",
+            "program": "packages/crawl4ai-mcp-py/main.py",
             "console": "integratedTerminal",
             "env": {
-                "MCP_TYPE": "sse"
+                "MCP_TYPE": "http",
+                "MCP_PORT": "7898"
+            }
+        },
+        {
+            "name": "Python: Searxng MCP",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "packages/searxng-mcp-py/main.py",
+            "console": "integratedTerminal",
+            "env": {
+                "MCP_TYPE": "http",
+                "MCP_PORT": "7899",
+                "SEARXNG_URL": ""
             }
         }
     ]
