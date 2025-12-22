@@ -8,6 +8,32 @@ from pydantic import BaseModel, field_validator
 
 mcp = FastMCP("agent-skills-mcp")
 
+# global path to search skills, comma separated path list
+global_skills_path = os.getenv("GLOBAL_SKILLS_PATH", "~/.skills/")
+# project-level path to search skills, comma separated path list
+project_skills_path = os.getenv("PROJECT_SKILLS_PATH", ".skills/")
+
+
+def parse_skills_paths(env_var: str, default_path: str) -> List[str]:
+    """Parse comma-separated paths from environment variable"""
+    paths_str = os.getenv(env_var, default_path)
+    if not paths_str:
+        return []
+
+    # Split by comma and expand user paths
+    paths = []
+    for path in paths_str.split(","):
+        path = path.strip()
+        if path:
+            # Expand ~ to home directory
+            expanded_path = os.path.expanduser(path)
+            # Convert to absolute path if relative
+            if not os.path.isabs(expanded_path):
+                expanded_path = os.path.join(os.getcwd(), expanded_path)
+            paths.append(expanded_path)
+
+    return paths
+
 
 class SkillFrontmatter(BaseModel):
     name: str
@@ -207,22 +233,14 @@ async def initialize_skills() -> List[Skill]:
     """Initialize skills cache during MCP startup"""
     global _skills_cache
 
-    # Determine config path: $XDG_CONFIG_HOME/opencode/skills or ~/.config/opencode/skills
-    xdg_config_home = os.environ.get("XDG_CONFIG_HOME")
-    if xdg_config_home:
-        config_skills_path = os.path.join(xdg_config_home, "opencode/skills")
-    else:
-        config_skills_path = os.path.join(
-            os.path.expanduser("~"), ".config/opencode/skills"
-        )
+    # Parse global and project skills paths from environment variables
+    global_paths = parse_skills_paths("GLOBAL_SKILLS_PATH", "~/.skills/")
+    project_paths = parse_skills_paths("PROJECT_SKILLS_PATH", ".skills/")
 
-    base_paths = [
-        os.path.join(os.getcwd(), ".opencode/skills"),
-        os.path.join(os.path.expanduser("~"), ".opencode/skills"),
-        config_skills_path,
-    ]
+    # Combine all paths, with project paths taking precedence for location detection
+    all_paths = global_paths + project_paths
 
-    _skills_cache = await discover_skills(base_paths)
+    _skills_cache = await discover_skills(all_paths)
     return _skills_cache
 
 
@@ -259,22 +277,10 @@ Skill Content:
 
 async def main_async():
     """Async main function to initialize skills"""
-    global _skills_cache
     # Initialize skills cache during startup
     print("Initializing skills...")
-    _skills_cache = await discover_skills(
-        [
-            os.path.join(os.getcwd(), ".opencode/skills"),
-            os.path.join(os.path.expanduser("~"), ".opencode/skills"),
-            os.path.join(
-                os.environ.get(
-                    "XDG_CONFIG_HOME", os.path.join(os.path.expanduser("~"), ".config")
-                ),
-                "opencode/skills",
-            ),
-        ]
-    )
-    print(f"✅ Loaded {len(_skills_cache)} skills")
+    skills = await initialize_skills()
+    print(f"✅ Loaded {len(skills)} skills")
 
 
 def main():
