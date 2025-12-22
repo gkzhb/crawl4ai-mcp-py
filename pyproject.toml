@@ -13,3 +13,8 @@ crawl4ai-mcp-py = { workspace = true }
 
 [tool.uv.workspace]
 members = ["packages/*"]
+
+[dependency-groups]
+dev = [
+    "rust-just>=1.45.0",
+]
