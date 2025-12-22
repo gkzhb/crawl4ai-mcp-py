@@ -88,14 +88,14 @@ async def parse_skill(skill_path: str, base_dir: str, cwd: str) -> Optional[Skil
 
         # Split frontmatter and content
         if not content.startswith("---"):
-            print(f"❌ Invalid frontmatter in {skill_path}: Missing YAML frontmatter")
+            # print(f"❌ Invalid frontmatter in {skill_path}: Missing YAML frontmatter")
             return None
 
         parts = content.split("---", 2)
         if len(parts) < 3:
-            print(
-                f"❌ Invalid frontmatter in {skill_path}: Incomplete YAML frontmatter"
-            )
+            # print(
+            #     f"❌ Invalid frontmatter in {skill_path}: Incomplete YAML frontmatter"
+            # )
             return None
 
         frontmatter_str = parts[1].strip()
@@ -106,21 +106,21 @@ async def parse_skill(skill_path: str, base_dir: str, cwd: str) -> Optional[Skil
             frontmatter_data = yaml.safe_load(frontmatter_str)
             frontmatter = SkillFrontmatter(**frontmatter_data)
         except yaml.YAMLError as e:
-            print(f"❌ Invalid YAML in {skill_path}: {e}")
+            # print(f"❌ Invalid YAML in {skill_path}: {e}")
             return None
         except ValueError as e:
-            print(f"❌ Invalid frontmatter in {skill_path}: {e}")
+            # print(f"❌ Invalid frontmatter in {skill_path}: {e}")
             return None
 
         # Validate name matches directory
         skill_dir = os.path.basename(os.path.dirname(skill_path))
         if frontmatter.name != skill_dir:
-            print(f"❌ Name mismatch in {skill_path}:")
-            print(f'   Frontmatter name: "{frontmatter.name}"')
-            print(f'   Directory name: "{skill_dir}"')
-            print(
-                f"   Fix: Update the 'name' field in SKILL.md to match the directory name"
-            )
+            # print(f"❌ Name mismatch in {skill_path}:")
+            # print(f'   Frontmatter name: "{frontmatter.name}"')
+            # print(f'   Directory name: "{skill_dir}"')
+            # print(
+            #     f"   Fix: Update the 'name' field in SKILL.md to match the directory name"
+            # )
             return None
 
         # Generate tool name from path
@@ -139,7 +139,7 @@ async def parse_skill(skill_path: str, base_dir: str, cwd: str) -> Optional[Skil
             location="project" if skill_path.startswith(cwd) else "global",
         )
     except Exception as e:
-        print(f"❌ Error parsing skill {skill_path}: {e}")
+        # print(f"❌ Error parsing skill {skill_path}: {e}")
         return None
 
 
@@ -164,10 +164,11 @@ async def discover_skills(base_paths: List[str]) -> List[Skill]:
                     skills.append(skill)
                     skill_count += 1
 
-            print(f"Found {skill_count} skills in {base_path}")
+            # print(f"Found {skill_count} skills in {base_path}")
         except Exception as e:
-            print(f"⚠️  Could not scan skills directory: {base_path}")
-            print(f"   Error: {e}")
+            # print(f"⚠️  Could not scan skills directory: {base_path}")
+            # print(f"   Error: {e}")
+            pass
 
     # Detect duplicate tool names
     tool_names = set()
@@ -179,7 +180,8 @@ async def discover_skills(base_paths: List[str]) -> List[Skill]:
         tool_names.add(skill.tool_name)
 
     if duplicates:
-        print(f"⚠️  Duplicate tool names detected: {duplicates}")
+        # print(f"⚠️  Duplicate tool names detected: {duplicates}")
+        pass
 
     return skills
 
@@ -251,46 +253,9 @@ def get_skills() -> List[Skill]:
         raise RuntimeError("Skills not initialized. Call initialize_skills() first.")
     return _skills_cache
 
-
-@mcp.tool
-async def rescan_skills(ctx: Context) -> str:
-    """Rescan and reload all skills from configured paths"""
-    global _skills_cache
-
-    await ctx.info("Starting skills rescan")
-
-    try:
-        skills = await initialize_skills()
-        await ctx.info(f"Successfully loaded {len(skills)} skills")
-
-        result = f"✅ Rescanned and loaded {len(skills)} skills\n\n"
-
-        if skills:
-            result += "Available skills:\n"
-            for skill in skills:
-                result += f"  - {skill.name}: {skill.description}\n"
-                await ctx.debug(f"Found skill: {skill.name} at {skill.path}")
-        else:
-            result += "No skills found in configured paths.\n"
-            await ctx.warning("No skills found during rescan")
-
-        return result
-    except Exception as e:
-        error_msg = f"Failed to rescan skills: {str(e)}"
-        await ctx.error(error_msg)
-        # Re-raise as ToolError to ensure error message is sent to client
-        raise ToolError(error_msg) from e
-
-
-async def main_async():
-    """Async main function to initialize skills"""
-    # Initialize skills cache during startup
-    print("Initializing skills...")
-    found_skills = await initialize_skills()
-    print(f"✅ Loaded {len(found_skills)} skills")
-
+def get_skills_tool(skill_list):
     # Register the skills tool with dynamic description containing all scanned skills
-    @mcp.tool(description=construct_tool_desc(found_skills))
+    @mcp.tool(description=construct_tool_desc(skill_list))
     async def skills(name: str, ctx: Context) -> str:
         """Execute a skill within the main conversation"""
         await ctx.debug(f"Starting skill execution for: {name}")
@@ -322,6 +287,51 @@ Skill Content:
             await ctx.error(f"Skill execution failed: {str(e)}")
             # Re-raise as ToolError to ensure error message is sent to client
             raise ToolError(f"Skill execution failed: {str(e)}") from e
+
+    return skills
+
+@mcp.tool
+async def rescan_skills(ctx: Context) -> str:
+    """Rescan and reload all skills from configured paths"""
+    global _skills_cache
+
+    await ctx.info("Starting skills rescan")
+
+    try:
+        skills = await initialize_skills()
+        await ctx.info(f"Successfully loaded {len(skills)} skills")
+
+        result = f"✅ Rescanned and loaded {len(skills)} skills\n\n"
+
+        if skills:
+            result += "Available skills:\n"
+            for skill in skills:
+                result += f"  - {skill.name}: {skill.description}\n"
+                await ctx.debug(f"Found skill: {skill.name} at {skill.path}")
+        else:
+            result += "No skills found in configured paths.\n"
+            await ctx.warning("No skills found during rescan")
+
+        # recreate skills tool
+        mcp.remove_tool("skills")
+        get_skills_tool(skills)
+        return result
+    except Exception as e:
+        error_msg = f"Failed to rescan skills: {str(e)}"
+        await ctx.error(error_msg)
+        # Re-raise as ToolError to ensure error message is sent to client
+        raise ToolError(error_msg) from e
+
+
+async def main_async():
+    """Async main function to initialize skills"""
+    # Initialize skills cache during startup
+    print("Initializing skills...")
+    found_skills = await initialize_skills()
+    print(f"✅ Loaded {len(found_skills)} skills")
+
+    # mcp.add_tool(get_skills_tool(found_skills))
+    get_skills_tool(found_skills)
 
 
 def main():
