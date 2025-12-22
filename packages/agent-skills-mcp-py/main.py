@@ -210,9 +210,9 @@ How to use skills:
 - When you invoke a skill, you will see <command-message>The "{{name}}" skill is loading</command-message>
 - The skill's prompt will expand and provide detailed instructions on how to complete the task
 - Examples:
-  - `command: "pdf"` - invoke the pdf skill
-  - `command: "xlsx"` - invoke the xlsx skill
-  - `command: "ms-office-suite:pdf"` - invoke using fully qualified name
+  - `name: "pdf"` - invoke the pdf skill
+  - `name: "xlsx"` - invoke the xlsx skill
+  - `name: "ms-office-suite:pdf"` - invoke using fully qualified name
 
 Important:
 - Only use skills listed in <available_skills> below
@@ -251,36 +251,40 @@ def get_skills() -> List[Skill]:
     return _skills_cache
 
 
-@mcp.tool()
-async def skills(command: str, ctx: Context) -> str:
-    """Execute a skill within the main conversation"""
-    skills_list = get_skills()
-    skill = next((s for s in skills_list if s.name == command), None)
-
-    if not skill:
-        available_names = [s.name for s in skills_list]
-        return f'Skill "{command}" not found. Available skills: {", ".join(available_names)}'
-
-    await ctx.info(f"Skill '{command}' executed")
-
-    return f"""<command-message>The "{command}" skill is running</command-message>
-<command-name>{command}</command-name>
-
-# {command} Skill information
-
-Base directory for this skill: {skill.full_path}
-
-Skill Content:
-
-{skill.content}"""
 
 
 async def main_async():
     """Async main function to initialize skills"""
     # Initialize skills cache during startup
     print("Initializing skills...")
-    skills = await initialize_skills()
-    print(f"✅ Loaded {len(skills)} skills")
+    found_skills = await initialize_skills()
+    print(f"✅ Loaded {len(found_skills)} skills")
+
+    # Register the skills tool with dynamic description containing all scanned skills
+    @mcp.tool(
+        description=construct_tool_desc(found_skills)
+    )
+    async def skills(name: str, ctx: Context) -> str:
+        """Execute a skill within the main conversation"""
+        skills_list = get_skills()
+        skill = next((s for s in skills_list if s.name == name), None)
+
+        if not skill:
+            available_names = [s.name for s in skills_list]
+            return f'Skill "{name}" not found. Available skills: {", ".join(available_names)}'
+
+        await ctx.info(f"Skill '{name}' executed")
+
+        return f"""<command-message>The "{name}" skill is running</command-message>
+<skill-name>{name}</skill-name>
+
+# {name} Skill information
+
+Base directory for this skill: {skill.full_path}
+
+Skill Content:
+
+{skill.content}"""
 
 
 def main():
