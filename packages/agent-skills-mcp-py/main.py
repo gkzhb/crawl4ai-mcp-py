@@ -4,6 +4,7 @@ import yaml
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 from fastmcp import FastMCP, Context
+from fastmcp.exceptions import ToolError
 from pydantic import BaseModel, field_validator
 
 mcp = FastMCP("agent-skills-mcp")
@@ -251,6 +252,34 @@ def get_skills() -> List[Skill]:
     return _skills_cache
 
 
+@mcp.tool
+async def rescan_skills(ctx: Context) -> str:
+    """Rescan and reload all skills from configured paths"""
+    global _skills_cache
+
+    await ctx.info("Starting skills rescan")
+
+    try:
+        skills = await initialize_skills()
+        await ctx.info(f"Successfully loaded {len(skills)} skills")
+
+        result = f"✅ Rescanned and loaded {len(skills)} skills\n\n"
+
+        if skills:
+            result += "Available skills:\n"
+            for skill in skills:
+                result += f"  - {skill.name}: {skill.description}\n"
+                await ctx.debug(f"Found skill: {skill.name} at {skill.path}")
+        else:
+            result += "No skills found in configured paths.\n"
+            await ctx.warning("No skills found during rescan")
+
+        return result
+    except Exception as e:
+        error_msg = f"Failed to rescan skills: {str(e)}"
+        await ctx.error(error_msg)
+        # Re-raise as ToolError to ensure error message is sent to client
+        raise ToolError(error_msg) from e
 
 
 async def main_async():
@@ -261,21 +290,25 @@ async def main_async():
     print(f"✅ Loaded {len(found_skills)} skills")
 
     # Register the skills tool with dynamic description containing all scanned skills
-    @mcp.tool(
-        description=construct_tool_desc(found_skills)
-    )
+    @mcp.tool(description=construct_tool_desc(found_skills))
     async def skills(name: str, ctx: Context) -> str:
         """Execute a skill within the main conversation"""
-        skills_list = get_skills()
-        skill = next((s for s in skills_list if s.name == name), None)
+        await ctx.debug(f"Starting skill execution for: {name}")
 
-        if not skill:
-            available_names = [s.name for s in skills_list]
-            return f'Skill "{name}" not found. Available skills: {", ".join(available_names)}'
+        try:
+            skills_list = get_skills()
+            skill = next((s for s in skills_list if s.name == name), None)
 
-        await ctx.info(f"Skill '{name}' executed")
+            if not skill:
+                available_names = [s.name for s in skills_list]
+                error_msg = f'Skill "{name}" not found. Available skills: {", ".join(available_names)}'
+                await ctx.warning(f"Skill not found: {name}")
+                # Use ToolError to ensure error message is sent to client
+                raise ToolError(error_msg)
 
-        return f"""<command-message>The "{name}" skill is running</command-message>
+            await ctx.info(f"Skill '{name}' executed successfully")
+
+            return f"""<command-message>The "{name}" skill is running</command-message>
 <skill-name>{name}</skill-name>
 
 # {name} Skill information
@@ -285,6 +318,10 @@ Base directory for this skill: {skill.full_path}
 Skill Content:
 
 {skill.content}"""
+        except Exception as e:
+            await ctx.error(f"Skill execution failed: {str(e)}")
+            # Re-raise as ToolError to ensure error message is sent to client
+            raise ToolError(f"Skill execution failed: {str(e)}") from e
 
 
 def main():
