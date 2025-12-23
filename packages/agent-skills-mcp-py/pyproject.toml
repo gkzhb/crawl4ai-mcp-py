@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "Agent Skills MCP Server"
 readme = "README.md"
 requires-python = ">=3.11"
+license = {text = "MIT"}
+license-files = ["LICENSE"]
 dependencies = [
     "fastmcp>=2.11.3",
     "pydantic>=2.11.7",
