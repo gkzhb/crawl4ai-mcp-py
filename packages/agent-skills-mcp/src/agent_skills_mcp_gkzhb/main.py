@@ -13,6 +13,8 @@ mcp = FastMCP("agent-skills-mcp")
 global_skills_path = os.getenv("GLOBAL_SKILLS_PATH", "~/.skills/")
 # project-level path to search skills, comma separated path list
 project_skills_path = os.getenv("PROJECT_SKILLS_PATH", ".skills/")
+# MCP server name prefix for tool names
+mcp_server_prefix = os.getenv("MCP_SERVER_NAME_PREFIX", "")
 
 
 def parse_skills_paths(env_var: str, default_path: str) -> List[str]:
@@ -209,7 +211,7 @@ def construct_tool_desc(skills: List[Skill]) -> str:
 When users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively. Skills provide specialized capabilities and domain knowledge.
 
 How to use skills:
-- **Invoke skills using this tool `skills` with the skill name only (no arguments)**
+- **Invoke skills using this tool `{mcp_server_prefix}skills` with the skill name only (no arguments)**
 - When you invoke a skill, you will see <command-message>The "{{name}}" skill is loading</command-message>
 - The skill's prompt will expand and provide detailed instructions on how to complete the task
 - Examples:
@@ -253,6 +255,7 @@ def get_skills() -> List[Skill]:
         raise RuntimeError("Skills not initialized. Call initialize_skills() first.")
     return _skills_cache
 
+
 def get_skills_tool(skill_list):
     # Register the skills tool with dynamic description containing all scanned skills
     @mcp.tool(description=construct_tool_desc(skill_list))
@@ -289,6 +292,7 @@ Skill Content:
             raise ToolError(f"Skill execution failed: {str(e)}") from e
 
     return skills
+
 
 @mcp.tool
 async def rescan_skills(ctx: Context) -> str:

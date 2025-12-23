@@ -12,6 +12,11 @@ dependencies = [
     "pyyaml>=6.0.1",
 ]
 
+[project.urls]
+Homepage = "https://github.com/gkzhb/crawl4ai-mcp-py"
+Repository = "https://github.com/gkzhb/crawl4ai-mcp-py"
+Issues = "https://github.com/gkzhb/crawl4ai-mcp-py/issues"
+
 [project.scripts]
 agent-skills = "agent_skills_mcp_gkzhb.main:main"
 
