@@ -1,8 +1,8 @@
 # Web Crawl and Search MCP Servers
 
-- [crawl4ai-mcp-py](./packages/crawl4ai-mcp-py/README.md): Convert Web page to md or html
-- [searxng-mcp-py](./packages/searxng-mcp-py/README.md): Search Web with Searxng
-- [agent-skills-mcp-py](./packages/agent-skills-mcp-py/README.md): [Agent Skills](https://agentskills.io/home) MCP
+- [crawl4ai-mcp](./packages/crawl4ai-mcp/README.md): Convert Web page to md or html
+- [searxng-mcp](./packages/searxng-mcp/README.md): Search Web with Searxng
+- [agent-skills-mcp](./packages/agent-skills-mcp/README.md): [Agent Skills](https://agentskills.io/home) MCP
 
 ## Environment Variables
 - `MCP_TYPE`: Transport type ( `stdio` , `sse` , `http` ) - defaults to "stdio"

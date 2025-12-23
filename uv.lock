@@ -4,16 +4,16 @@ requires-python = ">=3.11"
 
 [manifest]
 members = [
-    "agent-skills-mcp-py",
-    "crawl4ai-mcp-py",
-    "searxng-mcp-py",
+    "agent-skills-mcp",
+    "crawl4ai-mcp",
+    "searxng-mcp",
     "web-mcp-repo",
 ]
 
 [[package]]
-name = "agent-skills-mcp-py"
+name = "agent-skills-mcp"
 version = "0.1.0"
-source = { virtual = "packages/agent-skills-mcp-py" }
+source = { editable = "packages/agent-skills-mcp" }
 dependencies = [
     { name = "fastmcp" },
     { name = "pydantic" },
@@ -461,9 +461,9 @@ wheels = [
 ]
 
 [[package]]
-name = "crawl4ai-mcp-py"
+name = "crawl4ai-mcp"
 version = "0.1.0"
-source = { editable = "packages/crawl4ai-mcp-py" }
+source = { editable = "packages/crawl4ai-mcp" }
 dependencies = [
     { name = "crawl4ai" },
     { name = "playwright-stealth" },
@@ -2351,9 +2351,9 @@ wheels = [
 ]
 
 [[package]]
-name = "searxng-mcp-py"
+name = "searxng-mcp"
 version = "0.1.0"
-source = { virtual = "packages/searxng-mcp-py" }
+source = { editable = "packages/searxng-mcp" }
 dependencies = [
     { name = "httpx" },
     { name = "pydantic" },
