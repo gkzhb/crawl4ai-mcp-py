@@ -6,5 +6,5 @@ set dotenv-filename := ".env.http"
 set dotenv-load := true
 
 dev-http:
-    uv run src/agent-skills-mcp/main.py
+    uv run src/agent_skills_mcp_gkzhb/main.py
 

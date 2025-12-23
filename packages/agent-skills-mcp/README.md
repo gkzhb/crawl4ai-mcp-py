@@ -33,9 +33,9 @@ If no custom paths are configured, the server will search in these default locat
 
 ## Usage
 
-1. Create skill directories in your configured paths
-2. Add `SKILL.md` files with YAML frontmatter to define your skills
-3. Start the MCP server: `uv run main.py`
+1. Create skill directories in your configured paths and add skills
+2. [Optional] Set environment variables, e.g. `GLOBAL_SKILLS_PATH`, `MCP_TYPE`, `MCP_PORT`
+3. Start the MCP server: `uvx --from agent-skills-mcp-gkzhb agent-skills`
 
 ## Skill Format
 
