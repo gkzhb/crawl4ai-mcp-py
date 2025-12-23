@@ -14,15 +14,17 @@ MCP Server for [Agent Skills](https://agentskills.io/home).
 
 ### Environment Variables
 
-Configure skill discovery paths using environment variables:
+Configure skill discovery paths and tool naming using environment variables:
 
 - `GLOBAL_SKILLS_PATH`: Comma-separated list of global skill directories (default: `~/.skills/`)
 - `PROJECT_SKILLS_PATH`: Comma-separated list of project-level skill directories (default: `.skills/`)
+- `MCP_SERVER_NAME_PREFIX`: Optional prefix to prepend to tool names in the tool description prompt (e.g., with this mcp server configured as `skills` you may prefix "skills_", the tool will be referenced as "skills_skills" in tool description)
 
 Example:
 ```bash
 export GLOBAL_SKILLS_PATH="~/.skills/,~/.config/opencode/skills"
 export PROJECT_SKILLS_PATH=".skills/,./.opencode/skills"
+export MCP_SERVER_NAME_PREFIX="<this-mcp-name>_"
 ```
 
 ### Default Paths
@@ -34,7 +36,7 @@ If no custom paths are configured, the server will search in these default locat
 ## Usage
 
 1. Create skill directories in your configured paths and add skills
-2. [Optional] Set environment variables, e.g. `GLOBAL_SKILLS_PATH`, `MCP_TYPE`, `MCP_PORT`
+2. [Optional] Set environment variables, e.g. `GLOBAL_SKILLS_PATH`, `MCP_SERVER_NAME_PREFIX`, `MCP_TYPE`, `MCP_PORT`
 3. Start the MCP server: `uvx --from agent-skills-mcp-gkzhb agent-skills`
 
 ## Skill Format
