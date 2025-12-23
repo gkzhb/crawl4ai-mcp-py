@@ -1,6 +1,6 @@
 [project]
-name = "agent-skills-mcp"
-version = "0.1.0"
+name = "agent-skills-mcp-gkzhb"
+version = "0.1.1"
 description = "Agent Skills MCP Server"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
-agent-skills-mcp = "agent_skills_mcp.main:main"
+agent-skills = "agent_skills_mcp_gkzhb.main:main"
 
 [build-system]
 requires = ["uv_build>=0.9.18,<0.10.0"]

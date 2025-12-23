@@ -4,15 +4,15 @@ requires-python = ">=3.11"
 
 [manifest]
 members = [
-    "agent-skills-mcp",
+    "agent-skills-mcp-gkzhb",
     "crawl4ai-mcp",
     "searxng-mcp",
     "web-mcp-repo",
 ]
 
 [[package]]
-name = "agent-skills-mcp"
-version = "0.1.0"
+name = "agent-skills-mcp-gkzhb"
+version = "0.1.1"
 source = { editable = "packages/agent-skills-mcp" }
 dependencies = [
     { name = "fastmcp" },

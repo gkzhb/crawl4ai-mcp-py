@@ -10,6 +10,7 @@ alias b := build
 alias ba := build-all
 alias i := install
 alias p := publish
+alias v := version
 
 # install pypi dependencies
 install:
@@ -23,6 +24,10 @@ build-all:
 build package:
     uv build --package "{{package}}"
 
-# build package
+# publish package
 publish package:
-    uv publish --package "{{package}}"
+    uv publish "{{package}}"
+
+# set package version
+version package action:
+    uv version --package "{{package}}" --bump "{{action}}"
