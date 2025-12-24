@@ -47,7 +47,7 @@ async def web_to_md(url: str, ctx: Context) -> str:
             await ctx.info(f"Web crawler result: {result.markdown}")
             return "".join(result.markdown)
         await ctx.error(f"Web crawler result error: invalid result type {result}")
-        return "Crawle web failed."
+        return f"Crawle web failed: {getattr(result, 'error_message', 'Unknown error')}"
 
 
 @mcp.tool()
@@ -59,7 +59,7 @@ async def web_to_html(url: str, ctx: Context) -> str:
             await ctx.info(f"Web crawler result: {result.cleaned_html}")
             return "".join(result.cleaned_html)
         await ctx.error(f"Web crawler result error: invalid result type {result}")
-        return "Crawle web failed."
+        return f"Crawle web failed: {getattr(result, 'error_message', 'Unknown error')}"
 
 
 if __name__ == "__main__":
