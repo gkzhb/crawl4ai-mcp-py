@@ -1,6 +1,6 @@
 [project]
 name = "agent-skills-mcp-gkzhb"
-version = "0.1.1"
+version = "0.1.2"
 description = "Agent Skills MCP Server"
 readme = "README.md"
 requires-python = ">=3.11"
