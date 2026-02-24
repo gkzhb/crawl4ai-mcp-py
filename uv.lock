@@ -5,7 +5,9 @@ requires-python = ">=3.11"
 [manifest]
 members = [
     "agent-skills-mcp-gkzhb",
+    "common-mcp",
     "crawl4ai-mcp",
+    "gkzhb-mcp",
     "searxng-mcp",
     "web-mcp-repo",
 ]
@@ -15,6 +17,7 @@ name = "agent-skills-mcp-gkzhb"
 version = "0.1.2"
 source = { editable = "packages/agent-skills-mcp" }
 dependencies = [
+    { name = "common-mcp" },
     { name = "fastmcp" },
     { name = "pydantic" },
     { name = "pyyaml" },
@@ -22,6 +25,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "common-mcp", editable = "packages/common-mcp" },
     { name = "fastmcp", specifier = ">=2.11.3" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pyyaml", specifier = ">=6.0.1" },
@@ -326,9 +330,9 @@ wheels = [
 name = "chardet"
 version = "5.2.0"
 source = { registry = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple" }
-sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/f3/0d/f7b6ab21ec75897ed80c17d79b15951a719226b9fababf1e40ea74d69079/chardet-5.2.0.tar.gz", hash = "sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7" }
+sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/f3/0d/f7b6ab21ec75897ed80c17d79b15951a719226b9fababf1e40ea74d69079/chardet-5.2.0.tar.gz", hash = "sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7", size = 2069618, upload-time = "2023-08-01T19:23:02.662Z" }
 wheels = [
-    { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/38/6f/f5fbc992a329ee4e0f288c1fe0e2ad9485ed064cac731ed2fe47dcc38cbf/chardet-5.2.0-py3-none-any.whl", hash = "sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970" },
+    { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/38/6f/f5fbc992a329ee4e0f288c1fe0e2ad9485ed064cac731ed2fe47dcc38cbf/chardet-5.2.0-py3-none-any.whl", hash = "sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970", size = 199385, upload-time = "2023-08-01T19:23:00.661Z" },
 ]
 
 [[package]]
@@ -418,6 +422,17 @@ wheels = [
 ]
 
 [[package]]
+name = "common-mcp"
+version = "0.1.0"
+source = { editable = "packages/common-mcp" }
+dependencies = [
+    { name = "fastmcp" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "fastmcp", specifier = ">=2.11.3" }]
+
+[[package]]
 name = "crawl4ai"
 version = "0.7.4"
 source = { registry = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple" }
@@ -465,12 +480,14 @@ name = "crawl4ai-mcp"
 version = "0.1.0"
 source = { editable = "packages/crawl4ai-mcp" }
 dependencies = [
+    { name = "common-mcp" },
     { name = "crawl4ai" },
     { name = "playwright-stealth" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "common-mcp", editable = "packages/common-mcp" },
     { name = "crawl4ai", specifier = ">=0.7.4" },
     { name = "playwright-stealth", specifier = ">=2.0.0" },
 ]
@@ -724,6 +741,25 @@ source = { registry = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple" }
 sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/8b/02/0835e6ab9cfc03916fe3f78c0956cfcdb6ff2669ffa6651065d5ebf7fc98/fsspec-2025.7.0.tar.gz", hash = "sha256:786120687ffa54b8283d942929540d8bc5ccfa820deb555a2b5d0ed2b737bf58", size = 304432, upload-time = "2025-07-15T16:05:21.19Z" }
 wheels = [
     { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/2f/e0/014d5d9d7a4564cf1c40b5039bc882db69fd881111e03ab3657ac0b218e2/fsspec-2025.7.0-py3-none-any.whl", hash = "sha256:8b012e39f63c7d5f10474de957f3ab793b47b45ae7d39f2fb735f8bbe25c0e21", size = 199597, upload-time = "2025-07-15T16:05:19.529Z" },
+]
+
+[[package]]
+name = "gkzhb-mcp"
+version = "0.1.0"
+source = { editable = "packages/gkzhb-mcp" }
+dependencies = [
+    { name = "agent-skills-mcp-gkzhb" },
+    { name = "common-mcp" },
+    { name = "crawl4ai-mcp" },
+    { name = "searxng-mcp" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "agent-skills-mcp-gkzhb", editable = "packages/agent-skills-mcp" },
+    { name = "common-mcp", editable = "packages/common-mcp" },
+    { name = "crawl4ai-mcp", editable = "packages/crawl4ai-mcp" },
+    { name = "searxng-mcp", editable = "packages/searxng-mcp" },
 ]
 
 [[package]]
@@ -2355,12 +2391,14 @@ name = "searxng-mcp"
 version = "0.1.0"
 source = { editable = "packages/searxng-mcp" }
 dependencies = [
+    { name = "common-mcp" },
     { name = "httpx" },
     { name = "pydantic" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "common-mcp", editable = "packages/common-mcp" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pydantic", specifier = ">=2.11.7" },
 ]

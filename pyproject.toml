@@ -10,6 +10,11 @@ dependencies = [
 
 [tool.uv.sources]
 crawl4ai-mcp-py = { workspace = true }
+common-mcp = { workspace = true }
+crawl4ai-mcp = { workspace = true }
+searxng-mcp = { workspace = true }
+agent-skills-mcp-gkzhb = { workspace = true }
+gkzhb-mcp = { workspace = true }
 
 [tool.uv.workspace]
 members = ["packages/*"]

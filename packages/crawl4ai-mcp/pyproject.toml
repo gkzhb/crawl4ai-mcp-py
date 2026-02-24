@@ -7,6 +7,7 @@ requires-python = ">=3.11"
 license = "MIT"
 license-files = ["LICENSE"]
 dependencies = [
+    "common-mcp",
     "crawl4ai>=0.7.4",
     "playwright-stealth>=2.0.0",
 ]

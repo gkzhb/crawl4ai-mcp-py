@@ -1,0 +1,21 @@
+[project]
+name = "gkzhb-mcp"
+version = "0.1.0"
+description = "Unified MCP server for web tools"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+    "common-mcp",
+    "crawl4ai-mcp",
+    "searxng-mcp",
+    "agent-skills-mcp-gkzhb",
+]
+
+[project.scripts]
+gkzhb-mcp = "gkzhb_mcp.main:main"
+
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
