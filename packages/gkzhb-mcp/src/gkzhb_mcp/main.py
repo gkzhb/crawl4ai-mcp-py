@@ -1,5 +1,6 @@
 """Main entry point for gkzhb-mcp unified MCP server."""
 import asyncio
+import os
 from fastmcp import FastMCP
 from common_mcp import run_server
 
@@ -7,25 +8,56 @@ from common_mcp import run_server
 mcp = FastMCP("gkzhb-mcp")
 
 
+def get_enabled_tools():
+    """Parse MCP_TOOL_LIST environment variable to determine which tools to enable."""
+    tool_list_env = os.environ.get("MCP_TOOL_LIST", "")
+    if not tool_list_env:
+        # Default: enable all tools
+        return {"skills", "crawl4ai", "searxng"}
+
+    # Parse comma-separated list
+    enabled = {tool.strip().lower() for tool in tool_list_env.split(",") if tool.strip()}
+    valid_tools = {"skills", "crawl4ai", "searxng"}
+    invalid_tools = enabled - valid_tools
+
+    if invalid_tools:
+        print(f"Warning: Invalid tools in MCP_TOOL_LIST: {invalid_tools}. Valid options: {valid_tools}")
+
+    return enabled & valid_tools  # Only keep valid tools
+
+
 def main():
     """Main function to run the unified MCP server."""
-    # Import and register tools from each subpackage
-    from crawl4ai_mcp.register import register_tools as crawl4ai_register_tools
-    from searxng_mcp.register import register_tools as searxng_register_tools
-    from agent_skills_mcp_gkzhb.register import (
-        initialize_skills,
-        register_tools as skills_register_tools,
-    )
+    # Determine which tools to enable based on environment variable
+    enabled_tools = get_enabled_tools()
+    print(f"Enabled tools: {enabled_tools}")
 
-    # Initialize agent-skills first (requires async initialization)
-    print("Initializing agent skills...")
-    found_skills = asyncio.run(initialize_skills())
-    print(f"Loaded {len(found_skills)} skills")
+    # Import and register tools from each subpackage based on enabled tools
+    if "crawl4ai" in enabled_tools:
+        from crawl4ai_mcp.register import register_tools as crawl4ai_register_tools
 
-    # Register all tools from subpackages
-    crawl4ai_register_tools(mcp)
-    searxng_register_tools(mcp)
-    skills_register_tools(mcp, found_skills)
+    if "searxng" in enabled_tools:
+        from searxng_mcp.register import register_tools as searxng_register_tools
+
+    if "skills" in enabled_tools:
+        from agent_skills_mcp_gkzhb.register import (
+            initialize_skills,
+            register_tools as skills_register_tools,
+        )
+
+    # Initialize and register enabled tools
+    found_skills = []
+    if "skills" in enabled_tools:
+        print("Initializing agent skills...")
+        found_skills = asyncio.run(initialize_skills())
+        print(f"Loaded {len(found_skills)} skills")
+        skills_register_tools(mcp, found_skills)
+
+    if "crawl4ai" in enabled_tools:
+        crawl4ai_register_tools(mcp)
+
+    if "searxng" in enabled_tools:
+        searxng_register_tools(mcp)
 
     # Run server
     run_server(mcp, default_port=8000)

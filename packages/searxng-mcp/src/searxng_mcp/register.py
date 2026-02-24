@@ -1,6 +1,7 @@
 """Tool registration for searxng-mcp."""
 import os
 from fastmcp import FastMCP, Context
+from fastmcp.exceptions import ToolError
 from httpx import AsyncClient
 from pydantic import BaseModel
 
@@ -76,4 +77,4 @@ def register_tools(mcp: FastMCP) -> None:
             return result
         except Exception as e:
             await ctx.error(f"Search failed: {str(e)}")
-            return f"Search failed: {str(e)}"
+            raise ToolError(f"Search failed: {str(e)}")

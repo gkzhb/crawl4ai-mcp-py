@@ -1,9 +1,9 @@
 """Tool registration for agent-skills-mcp."""
+
 import os
 import glob
 import yaml
-from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict
 from fastmcp import FastMCP, Context
 from fastmcp.exceptions import ToolError
 from pydantic import BaseModel, field_validator
@@ -267,8 +267,10 @@ Base directory for this skill: {skill.full_path}
 Skill Content:
 
 {skill.content}"""
+        except ToolError:
+            raise
         except Exception as e:
-            await ctx.error(f"Skill execution failed: {str(e)}")
+            await ctx.error(f"Skill execution failed for '{name}': {str(e)}")
             raise ToolError(f"Skill execution failed: {str(e)}") from e
 
     @mcp.tool()
@@ -294,9 +296,8 @@ Skill Content:
                 await ctx.warning("No skills found during rescan")
 
             return result
+        except ToolError:
+            raise
         except Exception as e:
-            error_msg = f"Failed to rescan skills: {str(e)}"
-            await ctx.error(error_msg)
-            raise ToolError(error_msg) from e
-
-
+            await ctx.error(f"Failed to rescan skills: {str(e)}")
+            raise ToolError(f"Failed to rescan skills: {str(e)}") from e

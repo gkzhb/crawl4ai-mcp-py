@@ -1,7 +1,9 @@
 """Tool registration for crawl4ai-mcp."""
+
 import os
 from typing import Any, Dict
 from fastmcp import FastMCP, Context
+from fastmcp.exceptions import ToolError
 from crawl4ai.models import CrawlResultContainer
 from crawl4ai import (
     AsyncWebCrawler,
@@ -56,29 +58,34 @@ def register_tools(mcp: FastMCP) -> None:
     """Register all crawl4ai tools to the MCP server."""
 
     @mcp.tool()
-    async def web_to_md(url: str, ctx: Context, with_links: bool = False) -> Dict[str, Any]:
+    async def web_to_md(
+        url: str, ctx: Context, with_links: bool = False
+    ) -> Dict[str, Any]:
         """Convert web page to markdown content. Optionally extract links."""
-        async with AsyncWebCrawler(config=config, verbose=False) as crawler:
-            result = await crawler.arun(url=url, config=crawler_config)
-            if isinstance(result, CrawlResultContainer):
-                if ctx:
-                    await ctx.info(f"Web crawler result: {result.markdown}")
-                response: Dict[str, Any] = {"content": "".join(result.markdown)}
-                if with_links and hasattr(result, "links"):
-                    response["internal_links"] = filter_links(
-                        result.links.get("internal", [])
-                    )
-                    response["external_links"] = filter_links(
-                        result.links.get("external", [])
-                    )
-                return response
-            if ctx:
-                await ctx.error(f"Web crawler result error: invalid result type {result}")
-            return {
-                "content": f"Crawle web failed: {getattr(result, 'error_message', 'Unknown error')}",
-                "internal_links": [],
-                "external_links": [],
-            }
+        try:
+            async with AsyncWebCrawler(config=config, verbose=False) as crawler:
+                result = await crawler.arun(url=url, config=crawler_config)
+                if isinstance(result, CrawlResultContainer):
+                    await ctx.info(f"Web crawler result for URL: {url}")
+                    response: Dict[str, Any] = {"content": "".join(result.markdown)}
+                    if with_links and hasattr(result, "links"):
+                        response["internal_links"] = filter_links(
+                            result.links.get("internal", [])
+                        )
+                        response["external_links"] = filter_links(
+                            result.links.get("external", [])
+                        )
+                    return response
+                error_msg = f"Invalid result type: {type(result)}"
+                await ctx.error(
+                    f"Web crawler result error for URL '{url}': {error_msg}"
+                )
+                raise ToolError(f"Web crawler result error: {error_msg}")
+        except ToolError:
+            raise
+        except Exception as e:
+            await ctx.error(f"Web crawler failed for URL '{url}': {str(e)}")
+            raise ToolError(f"Web crawler failed: {str(e)}")
 
     @mcp.tool()
     async def web_to_html(
@@ -87,24 +94,28 @@ def register_tools(mcp: FastMCP) -> None:
         with_links: bool = False,
     ) -> Dict[str, Any]:
         """Convert web page to html content. Optionally extract links."""
-        async with AsyncWebCrawler(config=config, verbose=False) as crawler:
-            result = await crawler.arun(url=url, config=crawler_config)
-            if isinstance(result, CrawlResultContainer):
-                if ctx:
-                    await ctx.info(f"Web crawler result: {result.cleaned_html}")
-                response: Dict[str, Any] = {"content": "".join(result.cleaned_html)}
-                if with_links and hasattr(result, "links"):
-                    response["internal_links"] = filter_links(
-                        result.links.get("internal", [])
-                    )
-                    response["external_links"] = filter_links(
-                        result.links.get("external", [])
-                    )
-                return response
-            if ctx:
-                await ctx.error(f"Web crawler result error: invalid result type {result}")
-            return {
-                "content": f"Crawle web failed: {getattr(result, 'error_message', 'Unknown error')}",
-                "internal_links": [],
-                "external_links": [],
-            }
+        try:
+            async with AsyncWebCrawler(config=config, verbose=False) as crawler:
+                result = await crawler.arun(url=url, config=crawler_config)
+                if isinstance(result, CrawlResultContainer):
+                    await ctx.info(f"Web crawler result for URL: {url}")
+                    response: Dict[str, Any] = {"content": "".join(result.cleaned_html)}
+                    if with_links and hasattr(result, "links"):
+                        response["internal_links"] = filter_links(
+                            result.links.get("internal", [])
+                        )
+                        response["external_links"] = filter_links(
+                            result.links.get("external", [])
+                        )
+                    return response
+                error_msg = f"Invalid result type: {type(result)}"
+                await ctx.error(
+                    f"Web crawler result error for URL '{url}': {error_msg}"
+                )
+                raise ToolError(f"Web crawler result error: {error_msg}")
+        except ToolError:
+            raise
+        except Exception as e:
+            await ctx.error(f"Web crawler failed for URL '{url}': {str(e)}")
+            raise ToolError(f"Web crawler failed: {str(e)}")
+
