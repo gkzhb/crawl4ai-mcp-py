@@ -1,4 +1,5 @@
 """Tool registration for searxng-mcp."""
+
 import os
 from fastmcp import FastMCP, Context
 from fastmcp.exceptions import ToolError
@@ -76,5 +77,9 @@ def register_tools(mcp: FastMCP) -> None:
             await ctx.info(f"Search completed for query: {query}")
             return result
         except Exception as e:
-            await ctx.error(f"Search failed: {str(e)}")
-            raise ToolError(f"Search failed: {str(e)}")
+            import traceback
+
+            error_detail = f"{type(e).__name__}: {str(e) or '<no message>'}"
+            await ctx.error(f"Search failed: {error_detail}")
+            await ctx.error(f"Traceback:\n{traceback.format_exc()}")
+            raise ToolError(f"Search failed: {error_detail}")

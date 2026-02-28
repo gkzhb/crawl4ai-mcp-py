@@ -3,6 +3,7 @@
 import os
 from fastmcp import FastMCP
 from dotenv import load_dotenv
+from fastmcp.server.middleware.logging import StructuredLoggingMiddleware
 
 
 def load_dotenv_file() -> None:
@@ -28,6 +29,14 @@ def run_server(
         default_port: Default port for SSE/HTTP transports
         default_host: Default host for SSE/HTTP transports
     """
+
+    # Detect environment
+    env = os.getenv("ENV", "development").lower()
+    is_production = env == "production"
+
+    # Add production middleware for structured logging
+    if is_production:
+        mcp.add_middleware(StructuredLoggingMiddleware())
 
     mcp_type = os.getenv("MCP_TYPE", "stdio").lower()
     host = os.getenv("MCP_HOST", default_host)
