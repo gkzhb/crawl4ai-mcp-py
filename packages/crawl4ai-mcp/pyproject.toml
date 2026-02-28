@@ -8,7 +8,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 dependencies = [
     "common-mcp",
-    "crawl4ai>=0.7.4",
+    "crawl4ai>=0.8.0",
     "playwright-stealth>=2.0.0",
 ]
 

@@ -18,8 +18,16 @@ proxy_server = os.getenv("CRAWL4AI_PROXY_SERVER")
 proxy_username = os.getenv("CRAWL4AI_PROXY_USERNAME")
 proxy_password = os.getenv("CRAWL4AI_PROXY_PASSWORD")
 
+# Chrome CDP endpoint 配置
+chrome_cdp_endpoint = os.getenv("CHROME_CDP_ENDPOINT")
+
 # 构建BrowserConfig
 config_kwargs: Dict[str, Any] = {"enable_stealth": False}
+
+# 如果设置了 Chrome CDP WebSocket endpoint，添加到配置中
+if chrome_cdp_endpoint:
+    config_kwargs["cdp_url"] = chrome_cdp_endpoint
+    config_kwargs["cdp_cleanup_on_close"] = True
 
 # 如果设置了代理服务器，添加到配置中
 if proxy_server:
@@ -118,4 +126,3 @@ def register_tools(mcp: FastMCP) -> None:
         except Exception as e:
             await ctx.error(f"Web crawler failed for URL '{url}': {str(e)}")
             raise ToolError(f"Web crawler failed: {str(e)}")
-
