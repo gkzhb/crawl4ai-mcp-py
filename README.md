@@ -14,7 +14,7 @@ All MCP servers support the following common environment variables (configured v
 - `MCP_PORT`: Listening port for SSE/HTTP modes - defaults to "8000" or "8001"(more details in project readme file)
 - `ENV`: Environment mode (`development` or `production`) - defaults to "development"
 - `LOG_LEVEL`: Logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`) - defaults to "DEBUG" in development, "INFO" in production
-- `MCP_AUTH`: Comma-separated JWT tokens for authentication (optional)
+- `MCP_AUTH`: Comma-separated auth tokens for authentication (optional)
 - `DOTENV_FILE`: Path to dotenv file to load environment variables from (optional)
 
 For SSE type, connect to url http://localhost:8000/sse .

@@ -53,7 +53,7 @@ MCP_TOOL_LIST=skills uv run gkzhb-mcp
 - `MCP_PORT`: Port for SSE/HTTP modes, defaults to "8000"
 - `ENV`: Environment mode (development|production), defaults to "development"
 - `LOG_LEVEL`: Logging level (DEBUG|INFO|WARNING|ERROR), defaults to "DEBUG" in development, "INFO" in production
-- `MCP_AUTH`: Comma-separated JWT tokens for authentication (optional)
+- `MCP_AUTH`: Comma-separated auth tokens for authentication (optional)
 - `DOTENV_FILE`: Path to dotenv file to load environment variables from (optional)
 
 ### Tool Selection
