@@ -2,7 +2,7 @@
 
 import asyncio
 from fastmcp import FastMCP
-from common_mcp import load_dotenv_file, run_server
+from common_mcp import load_dotenv_file, run_server, create_auth_verifier_from_env
 from agent_skills_mcp_gkzhb.register import (
     initialize_skills,
     register_tools,
@@ -11,7 +11,11 @@ from agent_skills_mcp_gkzhb.register import (
 # Load environment variables from dotenv file at startup
 load_dotenv_file()
 
-mcp = FastMCP("agent-skills-mcp")
+# Create auth verifier from MCP_AUTH environment variable
+auth_verifier = create_auth_verifier_from_env()
+
+# Create MCP server with auth if available
+mcp = FastMCP("agent-skills-mcp", auth=auth_verifier)
 
 
 def main():

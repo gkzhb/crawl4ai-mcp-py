@@ -1,13 +1,17 @@
 """Main entry point for searxng-mcp."""
 
 from fastmcp import FastMCP
-from common_mcp import load_dotenv_file, run_server
+from common_mcp import load_dotenv_file, run_server, create_auth_verifier_from_env
 from searxng_mcp.register import register_tools
 
 # Load environment variables from dotenv file at startup
 load_dotenv_file()
 
-mcp = FastMCP("searxng-mcp")
+# Create auth verifier from MCP_AUTH environment variable
+auth_verifier = create_auth_verifier_from_env()
+
+# Create MCP server with auth if available
+mcp = FastMCP("searxng-mcp", auth=auth_verifier)
 
 # Register tools
 register_tools(mcp)
