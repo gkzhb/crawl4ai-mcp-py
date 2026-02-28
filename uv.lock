@@ -452,10 +452,14 @@ version = "0.1.0"
 source = { editable = "packages/common-mcp" }
 dependencies = [
     { name = "fastmcp" },
+    { name = "python-dotenv" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "fastmcp", specifier = ">=2.11.3" }]
+requires-dist = [
+    { name = "fastmcp", specifier = ">=2.11.3" },
+    { name = "python-dotenv", specifier = ">=1.0.0" },
+]
 
 [[package]]
 name = "crawl4ai"

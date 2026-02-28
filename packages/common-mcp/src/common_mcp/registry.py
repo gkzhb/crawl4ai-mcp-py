@@ -1,6 +1,8 @@
 """Common MCP utilities - Server running and common functionality."""
+
 import os
 from fastmcp import FastMCP
+from dotenv import load_dotenv
 
 
 def run_server(
@@ -15,6 +17,10 @@ def run_server(
         default_port: Default port for SSE/HTTP transports
         default_host: Default host for SSE/HTTP transports
     """
+    dotenv_file = os.getenv("DOTENV_FILE")
+    if dotenv_file:
+        load_dotenv(dotenv_file)
+
     mcp_type = os.getenv("MCP_TYPE", "stdio").lower()
     host = os.getenv("MCP_HOST", default_host)
     port_str = os.getenv("MCP_PORT", str(default_port))
