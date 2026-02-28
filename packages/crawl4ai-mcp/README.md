@@ -59,3 +59,27 @@ MCP_HOST=0.0.0.0 MCP_TYPE=sse uv run main.py
 - `MCP_TYPE`: Transport type ( `stdio` , `sse` , `http` ) - defaults to "stdio"
 - `MCP_HOST`: Host address for SSE/HTTP modes - defaults to "127.0.0.1"
 - `MCP_PORT`: Listening port for SSE/HTTP modes - defaults to "8000"
+- `CHROME_CDP_ENDPOINT`: Chrome DevTools Protocol URL for remote Chrome instance (optional)
+- `CRAWL4AI_PROXY_PROXY_SERVER`: Proxy server URL (optional)
+- `CRAWL4AI_PROXY_USERNAME`: Proxy username (optional)
+- `CRAWL4AI_PROXY_PASSWORD`: Proxy password (optional)
+
+## Remote Chrome CDP Support
+
+This server supports connecting to a remote Chrome instance via Chrome DevTools Protocol (CDP). This is useful for:
+
+- Running Chrome in a separate container or machine
+- Using a persistent Chrome instance across multiple requests
+- Custom Chrome configurations and extensions
+
+To use remote Chrome CDP:
+
+```bash
+# Run with remote Chrome CDP endpoint (WebSocket URL)
+CHROME_CDP_ENDPOINT=ws://chrome-browser:9222 uv run main.py
+
+# Run with remote Chrome CDP endpoint (HTTP URL)
+CHROME_CDP_ENDPOINT=http://chrome-browser:9222 uv run main.py
+```
+
+The CDP endpoint can be either a WebSocket URL (`ws://`) or HTTP URL (`http://`) pointing to your Chrome instance. The server will automatically connect to the remote Chrome and use it for crawling operations.
