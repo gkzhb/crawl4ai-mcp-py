@@ -92,6 +92,12 @@ def run_server(
     env = os.getenv("ENV", "development").lower()
     is_production = env == "production"
 
+    # Configure logging level based on environment
+    log_level = os.getenv(
+        "LOG_LEVEL",
+        "INFO" if is_production else "DEBUG",
+    )
+
     # Add production middleware for structured logging
     if is_production:
         mcp.add_middleware(StructuredLoggingMiddleware())
@@ -108,8 +114,8 @@ def run_server(
         raise ValueError(f"Invalid port number: {port_str}") from e
 
     if mcp_type == "sse":
-        mcp.run(transport="sse", host=host, port=port)
+        mcp.run(transport="sse", host=host, port=port, log_level=log_level)
     elif mcp_type == "http":
-        mcp.run(transport="http", host=host, port=port)
+        mcp.run(transport="http", host=host, port=port, log_level=log_level)
     else:
-        mcp.run(transport="stdio")
+        mcp.run(transport="stdio", log_level=log_level)

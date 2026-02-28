@@ -1,9 +1,10 @@
 """Tool registration for searxng-mcp."""
 
 import os
+import asyncio
 from fastmcp import FastMCP, Context
 from fastmcp.exceptions import ToolError
-from httpx import AsyncClient
+from httpx import AsyncClient, Timeout
 from pydantic import BaseModel
 
 
@@ -32,38 +33,49 @@ class Response(BaseModel):
     infoboxes: list[Infobox]
 
 
-client = AsyncClient(base_url=str(os.getenv("SEARXNG_URL", "http://localhost:8080")))
+client = AsyncClient(
+    base_url=str(os.getenv("SEARXNG_URL", "http://localhost:8080")),
+    timeout=Timeout(30.0, connect=10.0),
+    follow_redirects=True,
+)
 
 
 # reference to https://github.com/SecretiveShell/MCP-searxng for implementation
-async def search(query: str, limit: int = 5) -> str:
+async def search(query: str, limit: int = 5, max_retries: int = 3) -> str:
     params: dict[str, str] = {"q": query, "format": "json"}
 
-    response = await client.get("/search", params=params)
-    response.raise_for_status()
+    for attempt in range(max_retries):
+        try:
+            response = await client.get("/search", params=params)
+            response.raise_for_status()
 
-    data = Response.model_validate_json(response.text)
+            data = Response.model_validate_json(response.text)
 
-    text = ""
+            text = ""
 
-    for index, infobox in enumerate(data.infoboxes):
-        text += f"Infobox: {infobox.infobox}\n"
-        text += f"ID: {infobox.id}\n"
-        text += f"Content: <content>\n{infobox.content}\n</content>\n"
-        text += "\n\n"
+            for index, infobox in enumerate(data.infoboxes):
+                text += f"Infobox: {infobox.infobox}\n"
+                text += f"ID: {infobox.id}\n"
+                text += f"Content: <content>\n{infobox.content}\n</content>\n"
+                text += "\n\n"
 
-    text += "\n---\n\n"
+            text += "\n---\n\n"
 
-    if len(data.results) == 0:
-        text += "No results found\n"
+            if len(data.results) == 0:
+                text += "No results found\n"
 
-    for index, result in enumerate(data.results[0:limit]):
-        text += f"Title: {result.title}\n"
-        text += f"URL: {result.url}\n"
-        text += f"Content: <content>\n{result.content}\n</content>\n"
-        text += "\n\n"
+            for index, result in enumerate(data.results[0:limit]):
+                text += f"Title: {result.title}\n"
+                text += f"URL: {result.url}\n"
+                text += f"Content: <content>\n{result.content}\n</content>\n"
+                text += "\n\n"
 
-    return str(text)
+            return str(text)
+        except Exception as e:
+            if attempt < max_retries - 1:
+                await asyncio.sleep(1 * (attempt + 1))
+                continue
+            raise
 
 
 def register_tools(mcp: FastMCP) -> None:

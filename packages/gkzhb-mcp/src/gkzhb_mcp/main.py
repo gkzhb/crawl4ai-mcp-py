@@ -8,23 +8,12 @@ from common_mcp import load_dotenv_file, run_server, create_auth_verifier_from_e
 # Load environment variables from dotenv file at startup
 load_dotenv_file()
 
-# Configure logging level based on environment
-log_level = os.getenv(
-    "LOG_LEVEL",
-    "INFO" if os.getenv("ENV", "development").lower() == "production" else "DEBUG",
-)
-
-# Detect environment
-is_production = os.getenv("ENV", "development").lower() == "production"
-
 # Create auth verifier from MCP_AUTH environment variable
 auth_verifier = create_auth_verifier_from_env()
 
-# Create the unified MCP server with production settings
+# Create the unified MCP server
 mcp = FastMCP(
     "gkzhb-mcp",
-    debug=not is_production,  # 生产环境关闭 debug
-    log_level=log_level.lower(),
     auth=auth_verifier,
 )
 
