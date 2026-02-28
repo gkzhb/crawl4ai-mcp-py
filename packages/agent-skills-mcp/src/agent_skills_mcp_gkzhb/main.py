@@ -1,11 +1,15 @@
 """Main entry point for agent-skills-mcp."""
+
 import asyncio
 from fastmcp import FastMCP
-from common_mcp import run_server
+from common_mcp import load_dotenv_file, run_server
 from agent_skills_mcp_gkzhb.register import (
     initialize_skills,
     register_tools,
 )
+
+# Load environment variables from dotenv file at startup
+load_dotenv_file()
 
 mcp = FastMCP("agent-skills-mcp")
 

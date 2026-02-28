@@ -1,8 +1,12 @@
 """Main entry point for gkzhb-mcp unified MCP server."""
+
 import asyncio
 import os
 from fastmcp import FastMCP
-from common_mcp import run_server
+from common_mcp import load_dotenv_file, run_server
+
+# Load environment variables from dotenv file at startup
+load_dotenv_file()
 
 # Create the unified MCP server
 mcp = FastMCP("gkzhb-mcp")
@@ -16,12 +20,16 @@ def get_enabled_tools():
         return {"skills", "crawl4ai", "searxng"}
 
     # Parse comma-separated list
-    enabled = {tool.strip().lower() for tool in tool_list_env.split(",") if tool.strip()}
+    enabled = {
+        tool.strip().lower() for tool in tool_list_env.split(",") if tool.strip()
+    }
     valid_tools = {"skills", "crawl4ai", "searxng"}
     invalid_tools = enabled - valid_tools
 
     if invalid_tools:
-        print(f"Warning: Invalid tools in MCP_TOOL_LIST: {invalid_tools}. Valid options: {valid_tools}")
+        print(
+            f"Warning: Invalid tools in MCP_TOOL_LIST: {invalid_tools}. Valid options: {valid_tools}"
+        )
 
     return enabled & valid_tools  # Only keep valid tools
 

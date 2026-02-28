@@ -1,5 +1,5 @@
 """Common MCP utilities - Server running and common functionality."""
 
-from .registry import run_server
+from .registry import load_dotenv_file, run_server
 
-__all__ = ["run_server"]
+__all__ = ["load_dotenv_file", "run_server"]

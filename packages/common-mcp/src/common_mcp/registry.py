@@ -5,6 +5,17 @@ from fastmcp import FastMCP
 from dotenv import load_dotenv
 
 
+def load_dotenv_file() -> None:
+    """Load environment variables from dotenv file.
+
+    This function should be called at the beginning of main.py files
+    to ensure environment variables are loaded before any other code runs.
+    """
+    dotenv_file = os.getenv("DOTENV_FILE")
+    if dotenv_file:
+        load_dotenv(dotenv_file, override=True)
+
+
 def run_server(
     mcp: FastMCP,
     default_port: int = 8000,
@@ -17,9 +28,6 @@ def run_server(
         default_port: Default port for SSE/HTTP transports
         default_host: Default host for SSE/HTTP transports
     """
-    dotenv_file = os.getenv("DOTENV_FILE")
-    if dotenv_file:
-        load_dotenv(dotenv_file, override = True)
 
     mcp_type = os.getenv("MCP_TYPE", "stdio").lower()
     host = os.getenv("MCP_HOST", default_host)
