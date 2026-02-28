@@ -17,6 +17,19 @@ All MCP servers support the following common environment variables (configured v
 - `MCP_AUTH`: Comma-separated auth tokens for authentication (optional)
 - `DOTENV_FILE`: Path to dotenv file to load environment variables from (optional)
 
+### Authentication
+
+When `MCP_AUTH` is set, you need to include the auth token in the request header when connecting to the MCP server:
+
+```bash
+Authorization: Bearer <your-token>
+```
+
+Example:
+```bash
+curl -H "Authorization: Bearer my-secret-token" http://localhost:8000/mcp
+```
+
 For SSE type, connect to url http://localhost:8000/sse .
 For HTTP type, connect to url http://localhost:8000/mcp .
 
