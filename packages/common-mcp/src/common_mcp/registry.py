@@ -19,7 +19,7 @@ def run_server(
     """
     dotenv_file = os.getenv("DOTENV_FILE")
     if dotenv_file:
-        load_dotenv(dotenv_file)
+        load_dotenv(dotenv_file, override = True)
 
     mcp_type = os.getenv("MCP_TYPE", "stdio").lower()
     host = os.getenv("MCP_HOST", default_host)
