@@ -93,10 +93,13 @@ def register_tools(mcp: FastMCP) -> None:
                     await ctx.info(f"Web crawler result for URL: {url}")
                     markdown_content = getattr(result, "markdown", None)
                     await ctx.debug(
-                        f"markdown_content type: {type(markdown_content)}, value: {repr(markdown_content)[:500]}"
+                        f"markdown_content fit content: {str(markdown_content.fit_markdown)[:500]}, raw content: {repr(markdown_content.raw_markdown)[:500]} str:{str(markdown_content)}"
                     )
                     response: Dict[str, Any] = {
-                        "content": _safe_join_content(markdown_content, "markdown")
+                        "content": str(
+                            markdown_content.fit_markdown
+                            or markdown_content.raw_markdown
+                        )
                     }
                     if with_links and hasattr(result, "links"):
                         response["internal_links"] = filter_links(
