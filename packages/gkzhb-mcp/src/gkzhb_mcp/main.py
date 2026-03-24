@@ -1,12 +1,18 @@
 """Main entry point for gkzhb-mcp unified MCP server."""
 
 import asyncio
+import logging
 import os
 from fastmcp import FastMCP
+from fastmcp.utilities.logging import get_logger
 from common_mcp import load_dotenv_file, run_server, create_auth_verifier_from_env
 
 # Load environment variables from dotenv file at startup
 load_dotenv_file()
+
+# Set debug log level
+to_client_logger = get_logger(name="fastmcp.server.context.to_client")
+to_client_logger.setLevel(level=logging.DEBUG)
 
 # Create auth verifier from MCP_AUTH environment variable
 auth_verifier = create_auth_verifier_from_env()

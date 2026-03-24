@@ -62,6 +62,22 @@ def filter_links(links: list) -> list:
     return [filter_link(link) for link in links]
 
 
+def _safe_join_content(content: Any, field_name: str) -> str:
+    """Safely join content, handling None and non-iterable values."""
+    if content is None:
+        return ""
+    if isinstance(content, str):
+        return content
+    if hasattr(content, "__iter__"):
+        try:
+            return "".join(content)
+        except Exception as e:
+            raise ToolError(f"Failed to join {field_name}: {str(e)}")
+    raise ToolError(
+        f"Invalid {field_name} type: {type(content).__name__}, expected str or iterable"
+    )
+
+
 def register_tools(mcp: FastMCP) -> None:
     """Register all crawl4ai tools to the MCP server."""
 
@@ -75,7 +91,13 @@ def register_tools(mcp: FastMCP) -> None:
                 result = await crawler.arun(url=url, config=crawler_config)
                 if isinstance(result, CrawlResultContainer):
                     await ctx.info(f"Web crawler result for URL: {url}")
-                    response: Dict[str, Any] = {"content": "".join(result.markdown)}
+                    markdown_content = getattr(result, "markdown", None)
+                    await ctx.debug(
+                        f"markdown_content type: {type(markdown_content)}, value: {repr(markdown_content)[:500]}"
+                    )
+                    response: Dict[str, Any] = {
+                        "content": _safe_join_content(markdown_content, "markdown")
+                    }
                     if with_links and hasattr(result, "links"):
                         response["internal_links"] = filter_links(
                             result.links.get("internal", [])
@@ -107,7 +129,13 @@ def register_tools(mcp: FastMCP) -> None:
                 result = await crawler.arun(url=url, config=crawler_config)
                 if isinstance(result, CrawlResultContainer):
                     await ctx.info(f"Web crawler result for URL: {url}")
-                    response: Dict[str, Any] = {"content": "".join(result.cleaned_html)}
+                    html_content = getattr(result, "cleaned_html", None)
+                    await ctx.debug(
+                        f"cleaned_html type: {type(html_content)}, value: {repr(html_content)[:500]}"
+                    )
+                    response: Dict[str, Any] = {
+                        "content": _safe_join_content(html_content, "cleaned_html")
+                    }
                     if with_links and hasattr(result, "links"):
                         response["internal_links"] = filter_links(
                             result.links.get("internal", [])

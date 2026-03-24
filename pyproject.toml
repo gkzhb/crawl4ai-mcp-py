@@ -5,7 +5,7 @@ description = "A collection of MCP Servers for Web"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "fastmcp>=2.11.3",
+    "fastmcp>=3.0.0,<4",
 ]
 
 [tool.uv.sources]
